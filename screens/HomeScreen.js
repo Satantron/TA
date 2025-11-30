@@ -1,9 +1,11 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { fetchMyths } from '../supabase';
 import { LOCAL_SEED, MYTHOLOGIES } from '../data/seed';
 import SearchBar from '../components/SearchBar';
 import MythCard from '../components/MythCard';
+import usePagination from '../utils/usePagination';
+import PaginationControls from '../components/PaginationControls';
 
 export default function HomeScreen({ navigation }) {
   const [myths, setMyths] = useState([]);
@@ -17,16 +19,18 @@ export default function HomeScreen({ navigation }) {
     })();
   }, []);
 
-  const filtered = useMemo(() => {
+  // filtered results for query (client-side filter) and paginated
+  const filtered = myths.filter(m => {
     const q = (query || '').trim().toLowerCase();
-    if (!q) return [];
-    return myths.filter(m => {
-      const name = (m.name || '').toLowerCase();
-      const tags = (m.tags || '').toLowerCase();
-      const short = (m.short_desc || '').toLowerCase();
-      return name.includes(q) || tags.includes(q) || short.includes(q);
-    });
-  }, [myths, query]);
+    if (!q) return false;
+    const name = (m.name || '').toLowerCase();
+    const tags = (m.tags || '').toLowerCase();
+    const short = (m.short_desc || '').toLowerCase();
+    return name.includes(q) || tags.includes(q) || short.includes(q);
+  });
+
+  const filteredPager = usePagination({ items: filtered, initialPageSize: 6 });
+  const collectionsPager = usePagination({ items: MYTHOLOGIES, initialPageSize: 6 });
 
   const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => navigation.navigate('Collections', { screen: 'MythList', params: { mythology: item } })} style={styles.item}>
@@ -50,16 +54,20 @@ export default function HomeScreen({ navigation }) {
       {query ? (
         <View style={{ flex: 1 }}>
           <Text style={styles.section}>Search results</Text>
-          {filtered.length === 0 ? (
+          {filteredPager.pageData.length === 0 ? (
             <Text style={{ color: '#888', marginTop: 8 }}>No results.</Text>
           ) : (
-            <FlatList data={filtered} keyExtractor={(i) => String(i.id)} renderItem={renderResult} />
+            <>
+              <FlatList data={filteredPager.pageData} keyExtractor={(i) => String(i.id)} renderItem={renderResult} />
+              <PaginationControls page={filteredPager.page} setPage={filteredPager.setPage} totalPages={filteredPager.totalPages} />
+            </>
           )}
         </View>
       ) : (
         <>
           <Text style={styles.section}>Mythology Collections</Text>
-          <FlatList data={MYTHOLOGIES} keyExtractor={(i) => i} renderItem={renderItem} />
+          <FlatList data={collectionsPager.pageData} keyExtractor={(i) => i} renderItem={renderItem} />
+          <PaginationControls page={collectionsPager.page} setPage={collectionsPager.setPage} totalPages={collectionsPager.totalPages} />
         </>
       )}
     </View>

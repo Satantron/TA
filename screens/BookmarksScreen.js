@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, Alert, TouchableOpacity } from 'react-native';
 import MythCard from '../components/MythCard';
 import { useBookmarks } from '../context/BookmarksContext';
+import usePagination from '../utils/usePagination';
+import PaginationControls from '../components/PaginationControls';
 
 export default function BookmarksScreen({ navigation }) {
   const { bookmarks, removeBookmark, markSeen } = useBookmarks();
@@ -44,6 +46,7 @@ export default function BookmarksScreen({ navigation }) {
       </View>
     </View>
   );
+  const pager = usePagination({ items: bookmarks, initialPageSize: 6 });
 
   return (
     <View style={styles.container}>
@@ -59,12 +62,15 @@ export default function BookmarksScreen({ navigation }) {
       {bookmarks.length === 0 ? (
         <View style={styles.empty}><Text style={styles.emptyText}>No bookmarks yet. Long-press an item to save it.</Text></View>
       ) : (
-        <FlatList
-          data={bookmarks}
-          keyExtractor={item => String(item.id)}
-          renderItem={renderItem}
-          contentContainerStyle={{ paddingBottom: 24 }}
-        />
+        <>
+          <FlatList
+            data={pager.pageData}
+            keyExtractor={item => String(item.id)}
+            renderItem={renderItem}
+            contentContainerStyle={{ paddingBottom: 24 }}
+          />
+          <PaginationControls page={pager.page} setPage={pager.setPage} totalPages={pager.totalPages} />
+        </>
       )}
     </View>
   );

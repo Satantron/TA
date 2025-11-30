@@ -37,6 +37,25 @@ export async function fetchMyths() {
   }
 }
 
+// Fetch a page of myths from Supabase using range and request exact count.
+// Returns { data: [...], total: number } on success, or null on failure.
+export async function fetchMythsPage(page = 1, pageSize = 10) {
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize - 1;
+  try {
+    const { data, error, count } = await supabase
+      .from('myths')
+      .select('*', { count: 'exact' })
+      .order('id', { ascending: true })
+      .range(start, end);
+    if (error) throw error;
+    return { data: data || [], total: typeof count === 'number' ? count : (data ? data.length : 0) };
+  } catch (err) {
+    console.warn('Supabase paged fetch failed', err?.message || err);
+    return null;
+  }
+}
+
 // Optional helper to test the Supabase connection; returns true when successful.
 export async function testSupabaseConnection() {
   try {

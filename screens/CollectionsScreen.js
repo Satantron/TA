@@ -1,23 +1,22 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { MYTHOLOGIES } from '../data/seed';
 import SearchBar from '../components/SearchBar';
+import usePagination from '../utils/usePagination';
+import PaginationControls from '../components/PaginationControls';
 
 export default function CollectionsScreen({ navigation }) {
   const [query, setQuery] = useState('');
 
-  const filtered = useMemo(() => {
-    const q = (query || '').trim().toLowerCase();
-    if (!q) return MYTHOLOGIES;
-    return MYTHOLOGIES.filter(m => m.toLowerCase().includes(q));
-  }, [query]);
+  const pool = MYTHOLOGIES.filter(n => (query || '').trim() === '' ? true : n.toLowerCase().includes(query.trim().toLowerCase()));
+  const pager = usePagination({ items: pool, initialPageSize: 6 });
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Collections</Text>
       <SearchBar value={query} onChange={setQuery} placeholder="Search collections..." />
       <FlatList
-        data={filtered}
+        data={pager.pageData}
         keyExtractor={(i) => i}
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('MythList', { mythology: item })}>
@@ -26,6 +25,7 @@ export default function CollectionsScreen({ navigation }) {
           </TouchableOpacity>
         )}
       />
+      <PaginationControls page={pager.page} setPage={pager.setPage} totalPages={pager.totalPages} />
     </View>
   );
 }
