@@ -99,3 +99,29 @@ export async function fetchStoriesPage(page = 1, pageSize = 10) {
     return { data: [], total: 0 };
   }
 }
+
+// Upload an image to Supabase Storage and return a public URL
+export async function uploadImageToStorage(file, { bucket = 'images', pathPrefix = 'uploads' } = {}) {
+  try {
+    const fileName = `${pathPrefix}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
+    const { data, error } = await supabase.storage.from(bucket).upload(fileName, file, { contentType: 'image/jpeg', upsert: false });
+    if (error) throw error;
+    const { data: publicUrlData } = supabase.storage.from(bucket).getPublicUrl(data.path);
+    return publicUrlData?.publicUrl || null;
+  } catch (err) {
+    console.warn('Supabase upload failed', err?.message || err);
+    return null;
+  }
+}
+
+// Backgrounds API: table `backgrounds` with columns (mythology text primary, image_url text)
+export async function fetchBackgrounds() {
+  try {
+    const { data, error } = await supabase.from('backgrounds').select('*');
+    if (error) throw error;
+    return data || [];
+  } catch (err) {
+    console.warn('Supabase backgrounds fetch failed', err?.message || err);
+    return [];
+  }
+}

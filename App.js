@@ -32,11 +32,19 @@ function CollectionsStack() {
 function MainTabs() {
   return (
     <Tab.Navigator screenOptions={{ headerShown: false, tabBarStyle: { backgroundColor: '#0f0f0f' }, tabBarActiveTintColor: '#ffd166', tabBarInactiveTintColor: '#aaa' }}>
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Collections" component={CollectionsStack} options={{ title: 'Collections' }} />
-      <Tab.Screen name="Stories" component={StoriesScreen} options={{ title: 'Stories' }} />
+      <Tab.Screen name="Home" component={HomeScreen} options={{
+        tabBarIcon: ({ color, size }) => (<MaterialIcons name="home" size={size} color={color} />)
+      }} />
+      <Tab.Screen name="Collections" component={CollectionsStack} options={{ title: 'Collections',
+        tabBarIcon: ({ color, size }) => (<MaterialIcons name="category" size={size} color={color} />)
+      }} />
+      <Tab.Screen name="Stories" component={StoriesScreen} options={{ title: 'Stories',
+        tabBarIcon: ({ color, size }) => (<MaterialIcons name="menu-book" size={size} color={color} />)
+      }} />
       <Tab.Screen name="Bookmarks" component={BookmarksScreen} options={{ title: 'Bookmarks', tabBarIcon: (props) => <BookmarksTabIcon {...props} /> }} />
-      <Tab.Screen name="About" component={AboutScreen} />
+      <Tab.Screen name="About" component={AboutScreen} options={{
+        tabBarIcon: ({ color, size }) => (<MaterialIcons name="info" size={size} color={color} />)
+      }} />
     </Tab.Navigator>
   );
 }

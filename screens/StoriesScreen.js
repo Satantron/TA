@@ -28,7 +28,7 @@ export default function StoriesScreen({ navigation }) {
   } : null, initialPageSize: 8 });
 
   function openStory(item) {
-    // For now, reuse MythDetailScreen to preview; could add StoriesDetail later
+    // Always open detail; sources (including PDF) are shown at the bottom there
     navigation.navigate('MythDetail', { id: item.id, name: item.title, mythology: item.mythology, short_desc: item.summary, long_desc: item.content, image_url: item.image_url, source_url: item.source_url });
   }
 

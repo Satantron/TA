@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Platform } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Platform, ImageBackground } from 'react-native';
 import MythCard from '../components/MythCard';
 import { fetchMythsPage, fetchMyths } from '../supabase';
 import { LOCAL_SEED } from '../data/seed';
 import usePagination from '../utils/usePagination';
 import PaginationControls from '../components/PaginationControls';
 import useWebBack from '../utils/useWebBack';
+import { getBackgroundFor } from '../utils/backgrounds';
 
 export default function MythListScreen({ route, navigation }) {
   const mythology = route.params?.mythology || route.params;
@@ -50,12 +51,20 @@ export default function MythListScreen({ route, navigation }) {
 
   if (Platform.OS === 'web') useWebBack(navigation);
 
+  const [bgUrl, setBgUrl] = useState(null);
+  useEffect(() => {
+    (async () => {
+      const url = await getBackgroundFor(mythology);
+      setBgUrl(url);
+    })();
+  }, [mythology]);
+
   return (
-    <View style={styles.container}>
+    <ImageBackground source={bgUrl ? { uri: bgUrl } : null} style={styles.bg} imageStyle={styles.bgImage}>
       <Text style={styles.header}>{mythology}</Text>
       <FlatList data={pager.pageData} keyExtractor={(i) => String(i.id)} renderItem={({ item }) => <MythCard item={item} onPress={handlePress} />} />
       <PaginationControls page={pager.page} setPage={pager.setPage} totalPages={pager.totalPages} />
-    </View>
+    </ImageBackground>
   );
 }
 
@@ -78,6 +87,7 @@ async function fetchMythsPageWithFilter(mythology, start, end) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 12, backgroundColor: '#070707' },
+  bg: { flex: 1, padding: 12, backgroundColor: '#070707' },
+  bgImage: { opacity: 0.12 },
   header: { color: '#ffd166', fontSize: 22, marginBottom: 8 }
 });
