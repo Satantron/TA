@@ -32,8 +32,11 @@ const styles = StyleSheet.create({
     position: 'relative'
   },
   image: {
-    width: 120,
-    height: 90
+    width: 90,
+    height: 130,
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
+    resizeMode: 'cover'
   },
   body: {
     padding: 10,

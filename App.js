@@ -8,11 +8,13 @@ import CollectionsScreen from './screens/CollectionsScreen';
 import MythListScreen from './screens/MythListScreen';
 import MythDetailScreen from './screens/MythDetailScreen';
 import AboutScreen from './screens/AboutScreen';
+import StoriesScreen from './screens/StoriesScreen';
 import SplashScreen from './screens/SplashScreen';
 import BookmarksScreen from './screens/BookmarksScreen';
 import { BookmarksProvider, useBookmarks } from './context/BookmarksContext';
 import { View, Text, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import GlobalBackButton from './components/GlobalBackButton';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -32,6 +34,7 @@ function MainTabs() {
     <Tab.Navigator screenOptions={{ headerShown: false, tabBarStyle: { backgroundColor: '#0f0f0f' }, tabBarActiveTintColor: '#ffd166', tabBarInactiveTintColor: '#aaa' }}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Collections" component={CollectionsStack} options={{ title: 'Collections' }} />
+      <Tab.Screen name="Stories" component={StoriesScreen} options={{ title: 'Stories' }} />
       <Tab.Screen name="Bookmarks" component={BookmarksScreen} options={{ title: 'Bookmarks', tabBarIcon: (props) => <BookmarksTabIcon {...props} /> }} />
       <Tab.Screen name="About" component={AboutScreen} />
     </Tab.Navigator>
@@ -71,6 +74,7 @@ export default function App() {
   return (
     <BookmarksProvider>
       <NavigationContainer theme={NavigationDarkTheme}>
+        <GlobalBackButton />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Splash" component={SplashScreen} />
           <Stack.Screen name="Main" component={MainTabs} />

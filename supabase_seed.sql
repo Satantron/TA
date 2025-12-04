@@ -102,3 +102,5 @@ insert into myths (mythology, name, short_desc, long_desc, tags, source_url, ima
 ('Aztec','Tecciztecatl','Dewa bulan','Dewa bulan (deskripsi lebih lengkap belum tersedia)','aztec,dewa','','https://picsum.photos/seed/tecci/800/500');
 -- Run this in your Supabase SQL editor to create the `myths` table and seed entries.
 
+-- Stories table for narrative entries related to mythologies
+

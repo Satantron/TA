@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Platform } from 'react-native';
 import MythCard from '../components/MythCard';
 import { fetchMythsPage, fetchMyths } from '../supabase';
 import { LOCAL_SEED } from '../data/seed';
 import usePagination from '../utils/usePagination';
 import PaginationControls from '../components/PaginationControls';
+import useWebBack from '../utils/useWebBack';
 
 export default function MythListScreen({ route, navigation }) {
   const mythology = route.params?.mythology || route.params;
@@ -46,6 +47,8 @@ export default function MythListScreen({ route, navigation }) {
   const handlePress = (item) => {
     navigation.navigate('MythDetail', item);
   };
+
+  if (Platform.OS === 'web') useWebBack(navigation);
 
   return (
     <View style={styles.container}>

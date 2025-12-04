@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Alert, TouchableOpacity, Platform } from 'react-native';
 import MythCard from '../components/MythCard';
 import { useBookmarks } from '../context/BookmarksContext';
 import usePagination from '../utils/usePagination';
 import PaginationControls from '../components/PaginationControls';
+import BackButton from '../components/BackButton';
+import useWebBack from '../utils/useWebBack';
 
 export default function BookmarksScreen({ navigation }) {
   const { bookmarks, removeBookmark, markSeen } = useBookmarks();
@@ -48,8 +50,11 @@ export default function BookmarksScreen({ navigation }) {
   );
   const pager = usePagination({ items: bookmarks, initialPageSize: 6 });
 
+  if (Platform.OS === 'web') useWebBack(navigation);
+
   return (
     <View style={styles.container}>
+      <BackButton />
       <View style={styles.header}>
         <Text style={styles.title}>Bookmarks</Text>
         {bookmarks.length > 0 && (

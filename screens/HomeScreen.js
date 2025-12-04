@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Platform } from 'react-native';
 import { fetchMyths } from '../supabase';
 import { LOCAL_SEED, MYTHOLOGIES } from '../data/seed';
 import SearchBar from '../components/SearchBar';
 import MythCard from '../components/MythCard';
 import usePagination from '../utils/usePagination';
 import PaginationControls from '../components/PaginationControls';
+import useWebBack from '../utils/useWebBack';
 
 export default function HomeScreen({ navigation }) {
   const [myths, setMyths] = useState([]);
@@ -18,6 +19,8 @@ export default function HomeScreen({ navigation }) {
       else setMyths(LOCAL_SEED);
     })();
   }, []);
+  // Enable browser back to return from nested routes to Home
+  if (Platform.OS === 'web') useWebBack(navigation);
 
   // filtered results for query (client-side filter) and paginated
   const filtered = myths.filter(m => {

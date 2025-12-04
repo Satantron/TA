@@ -1,11 +1,15 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, Linking, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, Linking, TouchableOpacity, Platform } from 'react-native';
 import { useBookmarks } from '../context/BookmarksContext';
 import { MaterialIcons } from '@expo/vector-icons';
+import useWebBack from '../utils/useWebBack';
 
-export default function MythDetailScreen({ route }) {
+export default function MythDetailScreen({ route, navigation }) {
   const item = route.params;
   const { bookmarks, addBookmark, removeBookmark } = useBookmarks();
+
+  // register web back behaviour when applicable
+  if (Platform.OS === 'web') useWebBack(navigation);
 
   const bookmarked = bookmarks.find(b => b.id === item.id);
 
@@ -16,18 +20,22 @@ export default function MythDetailScreen({ route }) {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ padding: 12 }}>
-      <Image source={{ uri: item.image_url }} style={styles.image} />
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.title}>{item.name}</Text>
-          <Text style={styles.myth}>{item.mythology}</Text>
+      <View style={styles.headerRow}>
+        <Image source={{ uri: item.image_url }} style={styles.portrait} />
+        <View style={styles.headerTextWrap}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.title}>{item.name}</Text>
+              <Text style={styles.myth}>{item.mythology}</Text>
+            </View>
+            <TouchableOpacity onPress={toggleBookmark} style={[styles.bookmarkButton, bookmarked ? styles.bookmarked : styles.notBookmarked]} accessibilityLabel="Toggle bookmark">
+              <MaterialIcons name={bookmarked ? 'bookmark' : 'bookmark-border'} size={22} color={bookmarked ? '#111' : '#ffd166'} />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.desc}>{item.short_desc}</Text>
         </View>
-        <TouchableOpacity onPress={toggleBookmark} style={[styles.bookmarkButton, bookmarked ? styles.bookmarked : styles.notBookmarked]} accessibilityLabel="Toggle bookmark">
-          <MaterialIcons name={bookmarked ? 'bookmark' : 'bookmark-border'} size={22} color={bookmarked ? '#111' : '#ffd166'} />
-        </TouchableOpacity>
       </View>
 
-      <Text style={styles.desc}>{item.short_desc}</Text>
       {item.long_desc ? (
         <>
           <Text style={styles.sectionTitle}>Detail</Text>
@@ -48,7 +56,9 @@ export default function MythDetailScreen({ route }) {
 
 const styles = StyleSheet.create({
   container: { backgroundColor: '#060606' },
-  image: { width: '100%', height: 220, borderRadius: 8 },
+  portrait: { width: 120, height: 170, borderRadius: 8 },
+  headerRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
+  headerTextWrap: { flex: 1 },
   title: { color: '#fff', fontSize: 24, fontWeight: '700', marginTop: 12 },
   myth: { color: '#ffd166', marginTop: 6 },
   desc: { color: '#ddd', marginTop: 10, lineHeight: 20 },

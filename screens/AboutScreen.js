@@ -1,7 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, Linking } from 'react-native';
+import { View, Text, StyleSheet, Linking, Platform } from 'react-native';
+import useWebBack from '../utils/useWebBack';
 
 export default function AboutScreen() {
+  // register web back for About page
+  if (Platform.OS === 'web') useWebBack(null);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Lorebrary</Text>

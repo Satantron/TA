@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Platform } from 'react-native';
 import { MYTHOLOGIES } from '../data/seed';
 import SearchBar from '../components/SearchBar';
 import usePagination from '../utils/usePagination';
 import PaginationControls from '../components/PaginationControls';
+import useWebBack from '../utils/useWebBack';
 
 export default function CollectionsScreen({ navigation }) {
   const [query, setQuery] = useState('');
 
   const pool = MYTHOLOGIES.filter(n => (query || '').trim() === '' ? true : n.toLowerCase().includes(query.trim().toLowerCase()));
   const pager = usePagination({ items: pool, initialPageSize: 6 });
+
+  if (Platform.OS === 'web') useWebBack(navigation);
 
   return (
     <View style={styles.container}>
