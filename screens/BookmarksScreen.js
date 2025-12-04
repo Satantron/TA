@@ -8,7 +8,7 @@ import BackButton from '../components/BackButton';
 import useWebBack from '../utils/useWebBack';
 
 export default function BookmarksScreen({ navigation }) {
-  const { bookmarks, removeBookmark, markSeen } = useBookmarks();
+  const { bookmarks, removeBookmark, clearAll, markSeen } = useBookmarks();
 
   function openDetail(item) {
     // mark this item seen since user opened it from bookmarks
@@ -17,6 +17,11 @@ export default function BookmarksScreen({ navigation }) {
   }
 
   function confirmRemove(id) {
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      if (window.confirm('Remove this item from bookmarks?')) removeBookmark(id);
+      return;
+    }
+
     Alert.alert('Remove bookmark', 'Remove this item from bookmarks?', [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Remove', style: 'destructive', onPress: () => removeBookmark(id) }
@@ -24,9 +29,14 @@ export default function BookmarksScreen({ navigation }) {
   }
 
   function confirmClearAll() {
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      if (window.confirm('Remove all bookmarks?')) clearAll();
+      return;
+    }
+
     Alert.alert('Clear bookmarks', 'Remove all bookmarks?', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Clear', style: 'destructive', onPress: () => bookmarks.forEach(b => removeBookmark(b.id)) }
+      { text: 'Clear', style: 'destructive', onPress: () => clearAll() }
     ]);
   }
 

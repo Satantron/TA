@@ -50,6 +50,10 @@ export function BookmarksProvider({ children }) {
     setBookmarks(prev => prev.filter(b => b.id !== id));
   }
 
+  function clearAll() {
+    setBookmarks([]);
+  }
+
   function markAllSeen() {
     setBookmarks(prev => prev.map(b => (b.unread ? { ...b, unread: false } : b)));
   }
@@ -58,7 +62,7 @@ export function BookmarksProvider({ children }) {
     setBookmarks(prev => prev.map(b => (b.id === id && b.unread ? { ...b, unread: false } : b)));
   }
 
-  const value = { bookmarks, addBookmark, removeBookmark, markAllSeen, markSeen, loaded };
+  const value = { bookmarks, addBookmark, removeBookmark, clearAll, markAllSeen, markSeen, loaded };
   return <BookmarksContext.Provider value={value}>{children}</BookmarksContext.Provider>;
 }
 
